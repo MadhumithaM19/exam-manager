@@ -11,16 +11,18 @@ body{
     justify-content: space-between;
 }
 .add-button{
-    border: 3px solid green;
-    border-radius: 5px;
-    background-color: green;
-    color: white;
-}
-.save-button{
     border: 3px solid blue;
     border-radius: 5px;
     background-color: blue;
     color: white;
+    padding: 7px;
+}
+.save-button{
+    border: 3px solid green;
+    border-radius: 5px;
+    background-color: green;
+    color: white;
+    padding: 7px;
 }
 .exam-table {
   width: 100%;
@@ -47,3 +49,34 @@ body{
 .date{
     padding: 6px;
 }
+.tables{
+    display: flex;
+    gap: 20px;
+}
+.term-exam{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+}
+.term-exam th,
+.term-exam td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: center;
+}
+.student{
+    display: flex;
+    gap: 10px;
+}
+.student-add{
+    padding: 5px;
+    background-color:blue;
+    border: 4px solid blue;
+    border-radius:5px ;
+    color:white;
+    width: 10%;
+}
+.heading{
+    margin-top: 80px;
+}
+

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './ExamPage.css';
+import TermExam from './TermExam';
 
 function ExamPage() {
   const [count, setCount] = useState(1);
@@ -38,7 +39,7 @@ function ExamPage() {
     const updatedExams = [];
     for (let i = 0; i < exams.length; i++) {
       if (exams[i].sno !== sno) {
-        updatedExams.push({ ...exams[i] });
+        updatedExams.push({ ...exams });
       }
     }
     setExams(updatedExams);
@@ -46,7 +47,8 @@ function ExamPage() {
   };
 
   return (
-    <div>
+    <div className='tables'>
+      <div className='1st-table'>
       <h2 className="exam">Exam Manager</h2>
       <div className="adding">
         <button className="add-button" onClick={handleChange}>Add Exam</button>
@@ -68,7 +70,7 @@ function ExamPage() {
         </thead>
         <tbody>
           {exams.map((exam) => (
-            <tr key={exam.sno} onChange={(e) =>setCount(e.target.value)}>
+            <tr key={exam.sno} >
               <td>{exam.sno}</td>
               <td>
                 <input
@@ -104,6 +106,20 @@ function ExamPage() {
           
         </tbody>
       </table>
+
+     </div>
+     <div className='next-exam'>
+      {exams.length > 0 && exams.map((exam) =>(
+       <TermExam 
+       count = {exam.sno}
+       setCount = {setCount}
+       examName = {examName}
+       setExamName = {setExamName}
+       ></TermExam>)
+      )}
+     </div>
+     
+  
     </div>
   );
 }

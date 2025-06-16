@@ -11,6 +11,7 @@ function ExamPage() {
   const [exams, setExams] = useState([]);
 
   const handleChange = () => {
+     
     const newExam = {
       sno: count,
       examName,
@@ -18,7 +19,7 @@ function ExamPage() {
       endDate,
       notes,
     };
-
+    
     const updatedExams = [...exams, newExam];
     setExams(updatedExams);
     console.log("Exams:", updatedExams);
@@ -28,6 +29,21 @@ function ExamPage() {
     setEndDate('');
     setNotes('');
     setCount(count + 1);
+  };
+
+   
+  const handleInput = (value, index, key) => {
+    const updatedExams = [];
+    for(let i=0;i<exams.length;i++){
+      if(i === index){
+        const newVal = {...exams[i], [key]:value};
+        updatedExams.push(newVal);
+      }
+      else{
+        updatedExams.push(exams[i]);
+      }
+    }
+    setExams(updatedExams);
   };
 
   const handleSave = () =>{
@@ -69,39 +85,41 @@ function ExamPage() {
           </tr>
         </thead>
         <tbody>
-          {exams.map((exam) => (
-            <tr key={exam.sno} >
+          {exams.map((exam,index) => (
+            
+            <tr key={index} >
               <td>{exam.sno}</td>
               <td>
                 <input
-                  type="text"
+                  type="text" className='examname'
                   value={exam.examName}
-                  onChange={(e) => setExamName( e.target.value)}
+                  onChange={(e) => handleInput( e.target.value,index,'examName')}
                 />
               </td>
               <td>
                 <input
-                  type="date"
+                  type="date" className='examname'
                   value={exam.startDate}
-                  onChange={(e) => setStartDate( e.target.value)}
+                  onChange={(e) => handleInput( e.target.value,index,'startDate')}
                 />
               </td>
               <td>
                 <input
-                  type="date"
+                  type="date" className='examname'
                   value={exam.endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) => handleInput(e.target.value,index,'endDate')}
                 />
               </td>
               <td>
                 <input
-                  type="text"
+                  type="text" className='examname'
                   value={exam.notes}
-                  onChange={(e) => setNotes( e.target.value)}
+                  onChange={(e) => handleInput(e.target.value,index,'notes')}
                 />
               </td>
               <td><button className='exam-delete' onClick={handleDelete}>Delete</button></td>
             </tr>
+           
           ))}         
           
         </tbody>
@@ -109,12 +127,11 @@ function ExamPage() {
 
      </div>
      <div className='next-exam'>
-      {exams.length > 0 && exams.map((exam) =>(
+      {exams.length > 0 && exams.map((exam, index) =>(
        <TermExam 
+       key={index}
        count = {exam.sno}
-       setCount = {setCount}
-       examName = {examName}
-       setExamName = {setExamName}
+       exams = {exams}
        ></TermExam>)
       )}
      </div>

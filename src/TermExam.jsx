@@ -2,9 +2,10 @@ import { useState } from "react";
 import './ExamPage.css';
 
 
-function TermExam({count,setCount}){
+function TermExam({count,exams}){
 
     const [rollNo,setRollNo] = useState("");
+    const [val,setVal] = useState(0);
     const [tamil,setTamil] = useState(0);
     const [english,setEnglish] = useState(0);
     const [maths,setMaths] = useState(0);
@@ -16,12 +17,14 @@ function TermExam({count,setCount}){
 
 
   const studentAdd = () =>{
-    setModal(true);
-      console.log("adding values",count);
+   
+
   
-    const markTotal = Number(tamil) + Number(english) + Number(maths) + Number(science) + Number(social);
+      console.log("adding values",val);
+  
+    let markTotal = Number(tamil) + Number(english) + Number(maths) + Number(science) + Number(social);
     const newMarks = {
-        sno:count,
+        sno:val,
         rollNo,
         tamil,
         english,
@@ -29,32 +32,34 @@ function TermExam({count,setCount}){
         science,
         social,
         total : markTotal,
+        completed:false,
         
     };
 
-    setModal(false);
      
     setTotal(total);
     const updatedMarks = [...marks, newMarks];
     setMarks(updatedMarks);
     console.log("updated marks",updatedMarks);
-    setCount(count+1);
+    setVal(val+1);
     setRollNo('');
-    setTamil('');
-    setEnglish('');
-    setMaths('');
-    setScience('');
-    setSocial('');
-    setTotal('');
+    setTamil(0);
+    setEnglish(0);
+    setMaths(0);
+    setScience(0);
+    setSocial(0);
+    setTotal(0);
+    setModal(false)
       
   }
+
   
   const studentDelete = (sno) =>{
  
     const updatedMark = [];
     for (let i = 0; i < marks.length; i++) {
       if (marks[i].sno !== sno) {
-        updatedMark.push({ ...marks});
+        updatedMark.push({ ...marks[i]});
       }
     }
     setMarks(updatedMark);
@@ -68,7 +73,7 @@ function TermExam({count,setCount}){
          <h2 className="heading">Term {count}</h2>
          <div className="student">
             <input type="text" placeholder="Enter Roll No" value={rollNo} onChange={(e) => setRollNo(e.target.value)}/>
-            <button className="student-add" onClick={studentAdd}>Add</button>
+            <button className="student-add" onClick={() => setModal(true)}>Add</button>
          </div>
          <table className="term-exam">
           <thead>
@@ -86,72 +91,80 @@ function TermExam({count,setCount}){
           </tr>
          </thead>
          <tbody>
-          {marks.map((mark) => (
-            <tr key={mark.sno} >
+          {marks.map((mark,index) => (
+            <tr key={index} >
               <td>{mark.sno}</td>
               <td>
                 <input
-                  type="text"
+                  type="text" 
                   value={mark.rollNo}
                   onChange={(e) => setRollNo( e.target.value)}
                 />
               </td>
               <td>
                 <input
-                  type="number"
+                  type="number" className="id-input"
                   value={mark.tamil}
                   onChange={(e) => setTamil( e.target.value)}
                 />
               </td>
               <td>
                 <input
-                  type="number"
+                  type="number" className="id-input"
                   value={mark.english}
                   onChange={(e) => setEnglish(e.target.value)}
                 />
               </td>
               <td>
                 <input
-                  type="number"
+                  type="number" className="id-input"
                   value={mark.maths}
                   onChange={(e) => setMaths( e.target.value)}
                 />
               </td>
               <td>
                 <input
-                  type="number"
+                  type="number" className="id-input"
                   value={mark.science}
                   onChange={(e) => setScience( e.target.value)}
                 />
               </td>
               <td>
                 <input
-                  type="number"
+                  type="number" className="id-input"
                   value={mark.social}
                   onChange={(e) => setSocial( e.target.value)}
                 />
               </td>
               <td>
                 <input
-                  type="number"
+                  type="number" className="id-input"
                   value={mark.total}
                   onChange={(e) => setTotal( e.target.value)}
                 />
               </td>
-              <td><button className='exam-delete' onClick={studentDelete(mark.sno)}>Delete</button></td>
+              <td><button className='exam-delete' onClick={() =>studentDelete(mark.sno)}>Delete</button></td>
             </tr>
           ))}         
           
           </tbody>
         </table>
-
         {modal && (
-          <input type="checkbox" value={count}> Mark</input>
-        )
-
-        }
-
-
+        <div className="modal-box">
+          <h3>Add Students Id</h3>
+          {exams.map((exam, index) =>(
+            <div key={index}>
+              
+              <input   type="checkbox" checked={exam.completed}  onChange={() => toggleCheck(count)}/>Term{exam.sno}</div>
+          ))}
+                
+        
+          <div className="modal-option">
+            <button className="modal-save"  onClick={studentAdd}>Save</button>
+            <button className="modal-cancel" onClick={() => setModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )} 
         </>
     );
 }

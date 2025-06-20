@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './ExamPage.css';
 import TermExam from './TermExam';
+import { Tabs, TabList, Tab, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 function ExamPage() {
   const [count, setCount] = useState(1);
@@ -9,134 +11,125 @@ function ExamPage() {
   const [endDate, setEndDate] = useState('');
   const [notes, setNotes] = useState('');
   const [exams, setExams] = useState([]);
+  const [rollNo, setRollNo] = useState('');
+  const [val, setVal] = useState(0);
+  const [tamil, setTamil] = useState(0);
+  const [english, setEnglish] = useState(0);
+  const [maths, setMaths] = useState(0);
+  const [science, setScience] = useState(0);
+  const [social, setSocial] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [modal, setModal] = useState(false);
 
   const handleChange = () => {
-     
     const newExam = {
       sno: count,
       examName,
       startDate,
       endDate,
       notes,
+      marks: [] 
     };
-    
-    const updatedExams = [...exams, newExam];
-    setExams(updatedExams);
-    console.log("Exams:", updatedExams);
-
+    setExams([...exams, newExam]);
+    setCount(count + 1);
     setExamName('');
     setStartDate('');
     setEndDate('');
     setNotes('');
-    setCount(count + 1);
   };
 
-   
   const handleInput = (value, index, key) => {
-    const updatedExams = [];
-    for(let i=0;i<exams.length;i++){
-      if(i === index){
-        const newVal = {...exams[i], [key]:value};
-        updatedExams.push(newVal);
-      }
-      else{
-        updatedExams.push(exams[i]);
-      }
-    }
-    setExams(updatedExams);
+    const updated = [...exams];
+    updated[index][key] = value;
+    setExams(updated);
   };
-
-  const handleSave = () =>{
-    setExams(exams);
-    console.log("saved exams",exams);
-  }
 
   const handleDelete = (sno) => {
-    const updatedExams = [];
+    const updated = [];
     for (let i = 0; i < exams.length; i++) {
       if (exams[i].sno !== sno) {
-        updatedExams.push({ ...exams });
+        updated.push(exams[i]);
       }
     }
-    setExams(updatedExams);
-    console.log("Exams after delete:", updatedExams);
+    setExams(updated);
   };
 
   return (
     <div className='tables'>
-      <div className='1st-table'>
-      <h2 className="exam">Exam Manager</h2>
-      <div className="adding">
-        <button className="add-button" onClick={handleChange}>Add Exam</button>
-       
-          <button className="save-button" onClick={handleSave}>Save</button>
-      
+      <div>
+        <h2 className="exam">Exam Manager</h2>
+        <div className="adding">
+          <button className="add-button" onClick={handleChange}>Add Exam</button>
+          <button className="save-button" onClick={() => console.log(exams)}>Save</button>
+        </div>
+
+        <table className="exam-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Exam Name</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Notes</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {exams.map((exam, index) => (
+              <tr key={index}>
+                <td>{exam.sno}</td>
+                <td><input   type="text" value={exam.examName} onChange={(e) => handleInput(e.target.value, index, 'examName')} /></td>
+                <td><input  type="date" value={exam.startDate} onChange={(e) => handleInput(e.target.value, index, 'startDate')} /></td>
+                <td><input  type="date" value={exam.endDate} onChange={(e) => {
+                  if (e.target.value < exam.startDate) {
+                    alert("End date should be greater than start date");
+                  } else {
+                    handleInput(e.target.value, index, 'endDate');
+                  }
+                }} /></td>
+                <td><input  type="text" value={exam.notes} onChange={(e) => handleInput(e.target.value, index, 'notes')} /></td>
+                <td><button className="exam-delete" onClick={() => handleDelete(exam.sno)}>Delete</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      <table className="exam-table">
-        <thead>
-          <tr>
-            <th>S.No</th>
-            <th>Exam Name</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Notes</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Tabs>
+        <TabList>
           {exams.map((exam,index) => (
-            
-            <tr key={index} >
-              <td>{exam.sno}</td>
-              <td>
-                <input
-                  type="text" className='examname'
-                  value={exam.examName}
-                  onChange={(e) => handleInput( e.target.value,index,'examName')}
-                />
-              </td>
-              <td>
-                <input
-                  type="date" className='examname'
-                  value={exam.startDate}
-                  onChange={(e) => handleInput( e.target.value,index,'startDate')}
-                />
-              </td>
-              <td>
-                <input
-                  type="date" className='examname'
-                  value={exam.endDate}
-                  onChange={(e) => handleInput(e.target.value,index,'endDate')}
-                />
-              </td>
-              <td>
-                <input
-                  type="text" className='examname'
-                  value={exam.notes}
-                  onChange={(e) => handleInput(e.target.value,index,'notes')}
-                />
-              </td>
-              <td><button className='exam-delete' onClick={handleDelete}>Delete</button></td>
-            </tr>
-           
-          ))}         
-          
-        </tbody>
-      </table>
+            <Tab key={index}>{exam.examName || `Term ${exam.sno}`}</Tab>
+          ))}
+        </TabList>
 
-     </div>
-     <div className='next-exam'>
-      {exams.length > 0 && exams.map((exam, index) =>(
-       <TermExam 
-       key={index}
-       count = {exam.sno}
-       exams = {exams}
-       ></TermExam>)
-      )}
-     </div>
-     
-  
+        {exams.map((exam) => (
+          <TabPanel key={exam.sno}>
+            <TermExam
+              exam={exam}
+              exams={exams}
+              setExams={setExams}
+              rollNo={rollNo}
+              setRollNo={setRollNo}
+              val={val}
+              setVal={setVal}
+              tamil={tamil}
+              setTamil={setTamil}
+              english={english}
+              setEnglish={setEnglish}
+              maths={maths}
+              setMaths={setMaths}
+              science={science}
+              setScience={setScience}
+              social={social}
+              setSocial={setSocial}
+              total={total}
+              setTotal={setTotal}
+              modal={modal}
+              setModal={setModal}
+            />
+          </TabPanel>
+        ))}
+      </Tabs>
     </div>
   );
 }

@@ -12,7 +12,7 @@ function ExamPage() {
   const [notes, setNotes] = useState('');
   const [exams, setExams] = useState([]);
   const [rollNo, setRollNo] = useState('');
-  const [val, setVal] = useState(0);
+  const [val, setVal] = useState(1);
   const [tamil, setTamil] = useState(0);
   const [english, setEnglish] = useState(0);
   const [maths, setMaths] = useState(0);
@@ -22,6 +22,8 @@ function ExamPage() {
   const [modal, setModal] = useState(false);
 
   const handleChange = () => {
+
+   
     const newExam = {
       sno: count,
       examName,
@@ -30,6 +32,9 @@ function ExamPage() {
       notes,
       marks: [] 
     };
+    
+    
+
     setExams([...exams, newExam]);
     setCount(count + 1);
     setExamName('');
@@ -44,6 +49,10 @@ function ExamPage() {
     setExams(updated);
   };
 
+  const handleSave = () =>{
+    console.log("saved exams",exams);
+  }
+
   const handleDelete = (sno) => {
     const updated = [];
     for (let i = 0; i < exams.length; i++) {
@@ -51,7 +60,14 @@ function ExamPage() {
         updated.push(exams[i]);
       }
     }
+    
     setExams(updated);
+    console.log("deleting exams",updated);
+     setExamName('');
+    setStartDate('');
+    setEndDate('');
+    setNotes('');
+
   };
 
   return (
@@ -60,7 +76,7 @@ function ExamPage() {
         <h2 className="exam">Exam Manager</h2>
         <div className="adding">
           <button className="add-button" onClick={handleChange}>Add Exam</button>
-          <button className="save-button" onClick={() => console.log(exams)}>Save</button>
+          <button className="save-button" onClick={handleSave}>Save</button>
         </div>
 
         <table className="exam-table">
@@ -77,13 +93,22 @@ function ExamPage() {
           <tbody>
             {exams.map((exam, index) => (
               <tr key={index}>
-                <td>{exam.sno}</td>
+                <td>{index+1}</td>
                 <td><input   type="text" value={exam.examName} onChange={(e) => handleInput(e.target.value, index, 'examName')} /></td>
-                <td><input  type="date" value={exam.startDate} onChange={(e) => handleInput(e.target.value, index, 'startDate')} /></td>
-                <td><input  type="date" value={exam.endDate} onChange={(e) => {
-                  if (e.target.value < exam.startDate) {
+                <td><input  type="date" value={exam.startDate} onChange={(e) =>{
+                  if((exam.startDate&& e.target.value) > exam.endDate){
+                    alert("start date should be smaller than enddate")
+                  }
+                  else{
+                    handleInput(e.target.value, index, 'startDate')}
+                  }
+                   }/></td>
+                  <td><input  type="date" value={exam.endDate} onChange={(e) => {
+                    if (e.target.value < exam.startDate ) {
                     alert("End date should be greater than start date");
-                  } else {
+                  }
+
+                  else {
                     handleInput(e.target.value, index, 'endDate');
                   }
                 }} /></td>
@@ -98,7 +123,7 @@ function ExamPage() {
       <Tabs>
         <TabList>
           {exams.map((exam,index) => (
-            <Tab key={index}>{exam.examName || `Term ${exam.sno}`}</Tab>
+            <Tab key={index}>{exam.examName || `Term ${index+1}`}</Tab>
           ))}
         </TabList>
 

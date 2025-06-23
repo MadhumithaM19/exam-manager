@@ -29,42 +29,63 @@ function TermExam({
   const [selectedOne, setSelectedOne] = useState([]);
         console.log("checking selected one ",selectedOne);
 
-  const toggleCheck = (num) => {
+  const toggleCheck = (num) =>{
     let check = false;
-    for (let i = 0; i < selectedOne.length; i++) {
-      if (selectedOne[i] === num) {
+    for(let i=0;i<selectedOne.length;i++){
+      if(selectedOne[i] === num){
         check = true;
         break;
       }
     }
 
-    if (check) {
-      let newSelected = [];
-      for (let i = 0; i < selectedOne.length; i++) {
-        if (selectedOne[i] !== num) {
-          newSelected.push(selectedOne[i]);
-        }
-      }
-      setSelectedOne(newSelected);
-      console.log("checking after disselect",selectedOne);
-    } else {
-      let newSelected = [];
-      for (let i = 0; i < selectedOne.length; i++) {
-        newSelected.push(selectedOne[i]);
-      }
-      newSelected.push(num);
-      setSelectedOne(newSelected);
-      console.log("diselect after click",selectedOne);
+    if(check){
 
+      let update = [];
+      for(let i=0;i<selectedOne.length;i++){
+        if(selectedOne[i] !== num){
+          update.push(selectedOne[i]);
+        }
+
+      }
+        setSelectedOne(update);
+        console.log("updated select",selectedOne);
+      
+
+
+      // const newVal = {...exam, marks:[...exam.marks,num]};
+      // setSelectedOne(newVal);
+      // console.log("nrewVal",selectedOne);
     }
-  };
+    else{
+       let update = [];
+       for(let i=0;i<selectedOne.length;i++){
+        update.push(selectedOne[i]);
+        console.log("updated one",update);
+        
+       }
+       setSelectedOne(update);
+       update.push(num);
+       console.log("pushed num ",update);
+       setSelectedOne(update);
+      }
+    
+
+    
+  }
 
 
 
   const studentAdd = () => {
-    if (selectedOne.length === "") {
+   
+    if(rollNo === ""){
+      return alert("Enter RollNo");
+    }
+
+
+    if (selectedOne.length === 0) {
       return alert("Select at least one term");
     }
+    
 
     const newMark = {
       sno: val,
@@ -79,6 +100,8 @@ function TermExam({
 
     const updatedExams = exams.map((exam, index) => {
       let currentVal = false;
+       console.log("exam index value",index);
+       console.log("exam index +1",index+1);
 
       for (let j = 0; j < selectedOne.length; j++) {
         if (selectedOne[j] === index) {
@@ -88,11 +111,11 @@ function TermExam({
       }
 
       if (currentVal) {
-        return { ...exam, marks: [...exam.marks, newMark] };
+        return { ...exam, marks: [...exam.marks, newMark]};
       }
       return exam;
     });
-
+    setRollNo(rollNo);
     setExams(updatedExams);
     setVal(val + 1);
     setRollNo('');
@@ -132,7 +155,8 @@ function TermExam({
         updatedMarks.push(exam.marks[i]);
       }
     }
-
+     
+    console.log("deleted sno",exam.sno);
     const updatedExams = exams.map(data => {
       if (data.sno === exam.sno) {
         return { ...data, marks: updatedMarks };
@@ -141,6 +165,8 @@ function TermExam({
     });
 
     setExams(updatedExams);
+    
+
   };
 
   console.log("term exam ",exams);
@@ -149,18 +175,20 @@ function TermExam({
   return (
     <>
       <div className="student">
-        <input
-          type="text"
-          placeholder="Enter Roll No"
-          value={rollNo}
-          onChange={(e) => setRollNo(e.target.value)}
-        />
+         <input
+           type="text"
+           placeholder="Enter Roll No"
+           value={rollNo}
+           onChange={(e) => setRollNo(e.target.value)}
+         />       
         <button className="student-add" onClick={() => setModal(true)}>Add</button>
+        
       </div>
 
       <table className="term-exam">
         <thead>
           <tr>
+            
             <th>S.No</th>
             <th>Roll No</th>
             <th>Tamil</th>
@@ -175,8 +203,8 @@ function TermExam({
         <tbody>
           {exam.marks.map((mark, index) => (
             <tr key={index}>
-              <td>{mark.sno}</td>
-              <td><input type="text" value={mark.rollNo} readOnly /></td>
+              <td>{index+1}</td>
+              <td><input type="text" value={mark.rollNo} readOnly/></td>
               <td><input type="number" style={{ width: "40px" }} value={mark.tamil} onChange={(e) => handleMarks(e.target.value, index, 'tamil')} /></td>
               <td><input type="number" style={{ width: "40px" }} value={mark.english} onChange={(e) => handleMarks(e.target.value, index, 'english')} /></td>
               <td><input type="number" style={{ width: "40px" }} value={mark.maths} onChange={(e) => handleMarks(e.target.value, index, 'maths')} /></td>
@@ -201,7 +229,7 @@ function TermExam({
                   checked={selectedOne.includes(index)}
                   onChange={() => toggleCheck(index)}
                 />
-                {exam.examName}
+                {exam.examName || `Term ${index+1}`}
               </div>
             ))}
           </div>
